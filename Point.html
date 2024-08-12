@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div id="ttl">
+        FANAOVANA POINTAGE 
+    </div>
+    <div id="Entete">
+        Photos de consernat
+    </div>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        #container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        #imageContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 500px;
+            height: 500px;
+            border: 2px solid #3498db;
+            margin-left: 20px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+        #recapitulatif {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #e74c3c;
+        }
+        #pointageImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        form {
+            background-color: #51b622;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            background-color: #3498db;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #effacerDerniereLigne {
+            background-color: #e74c3c;
+            margin-top: 20px;
+        }
+        #effacerDerniereLigne:hover {
+            background-color: #c0392b;
+        }
+        #clock {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(180, 106, 106, 0.3);
+        }
+        #Entete {
+    position: absolute;
+    top: 20px;
+    right: 200px;
+    background-color: #2aaa99;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(226, 211, 4, 0.918);
+}
+#ttl {
+    position: absolute;
+    top: 20px;
+    right: 900px;
+    background-color: #2aaa99;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(226, 211, 4, 0.918);
+}
+.link-label {
+            position: fixed;
+            bottom: 1px;
+            right: 1120px;
+            background-color: #df23c6;
+            color: #fff;
+            padding: 1px;
+            border-radius: 1px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);    
+        }
+        .link-label:hover {
+            background-color: #2c4897;
+        }
+    </style>
+</head>
+<body>
+    <h1></h1><br><br>
+    <div id="container">
+        <div>
+            <form id="pointageForm">
+                <label for="prenom">Prénom :</label>
+                <input type="text" id="prenom" name="prenom" required>
+                <button type="button" onclick="ajouterPointage()">ENTRÉE</button>
+                <button type="button" onclick="enregistrerSortie()">SORTIE</button>
+                <button id="effacerDerniereLigne">ANULER</button><br>
+                <h1>_______________________________________________</h1>
+                <div id="recapitulatif"></div>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Prénom</th>
+                        <th>Heure d'Entrée</th>
+                        <th>Heure de Sortie</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+        <div id="imageContainer">
+            <img id="pointageImage" src="" alt="Image de Pointage"/>
+        </div>
+    </div>
+    
+    <div id="clock"></div>
+<div> <h6><a href="https://www.facebook.com" class="link-label" title="Visitez Example.com">Conception : Maminjanahary Evariste (Cliquer ici pour la commentaire ou conseil) </a></h6></div>
+    <script>
+        function afficherPointages() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            const pointages = JSON.parse(localStorage.getItem('pointages')) || [];
+            pointages.forEach(pointage => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pointage.date}</td>
+                    <td>${pointage.prenom}</td>
+                    <td>${pointage.heureEntree}</td>
+                    <td>${pointage.heureSortie || ''}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            afficherRecapitulatif();
+        }
+
+        function afficherRecapitulatif() {
+            const pointages = JSON.parse(localStorage.getItem('pointages')) || [];
+            const aujourdHui = new Date().toLocaleDateString();
+            const sansSortieAujourdHui = pointages.filter(pointage => pointage.date === aujourdHui && !pointage.heureSortie).length;
+            document.getElementById('recapitulatif').textContent = `Nombre de pointages sans heure de sortie aujourd'hui : ${sansSortieAujourdHui}`;
+        }
+
+        function ajouterPointage() {
+            const prenom = document.getElementById('prenom').value.trim();
+            if (prenom === '' || prenom.length > 3) {
+                alert("Le prénom ne peut pas être vide ou contenir plus de 3 caractères.");
+                return;
+            }
+
+            const date = new Date().toLocaleDateString();
+            const heureEntree = new Date().toLocaleTimeString();
+            const pointages = JSON.parse(localStorage.getItem('pointages')) || [];
+
+            const existingPointage = pointages.find(pointage => pointage.prenom === prenom && !pointage.heureSortie);
+            if (existingPointage) {
+                alert("Ce prénom a déjà un pointage sans heure de sortie. Veuillez enregistrer la sortie avant d'ajouter une nouvelle entrée.");
+                return;
+            }
+
+            const newPointage = { date, prenom, heureEntree };
+            pointages.push(newPointage);
+            localStorage.setItem('pointages', JSON.stringify(pointages));
+            afficherPointages();
+            document.getElementById('prenom').value = '';
+            afficherImage(prenom);
+        }
+
+        function enregistrerSortie() {
+            const prenom = document.getElementById('prenom').value.trim();
+            if (prenom === '') {
+                alert("Veuillez entrer un prénom.");
+                return;
+            }
+
+            const pointages = JSON.parse(localStorage.getItem('pointages')) || [];
+            const index = pointages.findIndex(pointage => pointage.prenom === prenom && !pointage.heureSortie);
+
+            if (index === -1) {
+                alert("Aucun pointage d'entrée trouvé pour ce prénom ou la sortie est déjà enregistrée.");
+                return;
+            }
+
+            const heureSortie = new Date().toLocaleTimeString();
+            pointages[index].heureSortie = heureSortie;
+            localStorage.setItem('pointages', JSON.stringify(pointages));
+            afficherPointages();
+            document.getElementById('prenom').value = '';
+            afficherImage(prenom);
+        }
+
+        function afficherImage(prenom) {
+            const imagePath = `d:/pointage/${prenom}.jpg`;
+            const imgElement = document.getElementById('pointageImage');
+            imgElement.src = imagePath;
+            imgElement.onload = () => imgElement.style.display = 'block';
+            imgElement.onerror = () => imgElement.style.display = 'none';
+        }
+
+        document.getElementById('effacerDerniereLigne').addEventListener('click', () => {
+            const pointages = JSON.parse(localStorage.getItem('pointages')) || [];
+            if (pointages.length > 0) {
+                pointages.pop();
+                localStorage.setItem('pointages', JSON.stringify(pointages));
+                afficherPointages();
+            } else {
+                alert("Aucune ligne à effacer.");
+            }
+        });
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        window.onload = afficherPointages;
+    </script>
+</body>
+</html>
